@@ -69,7 +69,7 @@ def tick(dt):
 
 ## 5. Time-to-kill (TTK) — the master balance lever
 
-```
+```text
 shots_to_kill = ceil(target_hp / damage_per_shot)
 TTK_seconds   = (shots_to_kill - 1) / fire_rate_per_second   # first shot at t=0
 ```
@@ -91,7 +91,7 @@ TTK_seconds   = (shots_to_kill - 1) / fire_rate_per_second   # first shot at t=0
 
 A small state machine covers most PvE shooters:
 
-```
+```text
 IDLE/PATROL --(sees player)--> ALERT --(in range)--> ATTACK
 ATTACK --(lost line of sight)--> SEARCH(last known pos) --(timeout)--> PATROL
 any --(took damage from unseen)--> ALERT (turn toward source)

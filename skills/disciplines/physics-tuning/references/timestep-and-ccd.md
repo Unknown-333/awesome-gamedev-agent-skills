@@ -44,7 +44,7 @@ The render frame almost never lands exactly on a physics tick, so drawing the ra
 physics transform stutters. Interpolate the *visual* between the previous and
 current physics states by `alpha`:
 
-```
+```text
 visual_pos = lerp(prev_pos, curr_pos, alpha)
 visual_rot = slerp(prev_rot, curr_rot, alpha)   # rotations: spherical lerp
 ```

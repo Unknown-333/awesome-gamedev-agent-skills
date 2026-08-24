@@ -64,7 +64,7 @@ Properties you want: **symmetric** (if A sees B, B sees A), no blind spots, no f
 player moves. Recursive shadowcasting scans the eight octants around the origin, tracking a
 "shadow" of slopes blocked by walls:
 
-```
+```text
 for each of 8 octants:
     scan rows outward from the origin up to radius R
     track the visible slope range [start_slope, end_slope]

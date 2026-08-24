@@ -9,7 +9,7 @@ practical how-to. The fastest route for every agent is the
 
 Skills are stored here as:
 
-```
+```text
 skills/<category>/<name>/SKILL.md
 ```
 

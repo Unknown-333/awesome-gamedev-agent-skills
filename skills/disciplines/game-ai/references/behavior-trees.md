@@ -70,7 +70,7 @@ class MoveTo:
 
 A complete guard, as a tree:
 
-```
+```text
 Selector
 ├── Sequence            # attack branch (highest priority)
 │   ├── CanSeePlayer
@@ -113,7 +113,7 @@ state to a behavior tree when its `if` logic outgrows a few transitions.
 When "how *much* do I want each option" matters more than discrete states, score
 each candidate action with a utility function and pick the highest:
 
-```
+```text
 score(action) = sum of weighted considerations, each a 0..1 curve of a fact
 choose the action with the maximum score (optionally softmax for variety)
 ```

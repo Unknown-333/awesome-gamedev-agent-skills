@@ -9,7 +9,7 @@ authoring standard in [`docs/SKILL-FORMAT.md`](docs/SKILL-FORMAT.md) before open
 A skill is a directory containing a `SKILL.md` file (and optionally a `references/`
 folder for depth). It lives under the matching category in `skills/`:
 
-```
+```text
 skills/<category>/<skill-name>/
 ├── SKILL.md
 └── references/        # optional, for deeper material

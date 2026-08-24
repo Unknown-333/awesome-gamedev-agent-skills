@@ -9,7 +9,7 @@ stale state after a restart, and duplicate event listeners.
 A scene is **booted once** (status `INIT`) and can be **started any number of
 times**. On each start it runs:
 
-```
+```text
 start → (loading, if preload queued anything) → create → running
 ```
 

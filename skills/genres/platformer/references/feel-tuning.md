@@ -10,7 +10,7 @@ A jump is just projectile motion. Choose the two values a designer can actually 
 **peak height** `h` and **time to reach the peak** `t` — and solve for the rest. With the
 y-axis pointing down (most 2D engines):
 
-```
+```text
 gravity        g  = 2h / t²
 jump_velocity  v0 = -2h / t          # negative = upward
 peak reached after t seconds; total airtime ≈ 2t (symmetric gravity)
@@ -18,7 +18,7 @@ peak reached after t seconds; total airtime ≈ 2t (symmetric gravity)
 
 Asymmetric gravity makes the fall snappier than the rise without changing peak height:
 
-```
+```text
 rise_gravity = g
 fall_gravity = g * fall_multiplier   # 1.5–2.0 feels good
 # airtime shortens; the arc looks like a fast, weighty drop after a quick pop up.

@@ -30,7 +30,7 @@ keep them out of public repos or inject them in CI rather than committing.
 
 ## Useful command-line flags
 
-```
+```text
 godot --headless                      run without a window/GPU
       --path <dir>                    project directory (where project.godot is)
       --export-release "<preset>" <out>   export a release build

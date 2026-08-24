@@ -52,7 +52,7 @@ def acquire_target(tower, enemies, mode):
 
 ## 3. DPS and "can this lane hold?"
 
-```
+```text
 tower_dps        = damage * fire_rate            # shots/sec
 effective_dps    = tower_dps * (1 - target.armor_reduction)
 time_in_range    = path_length_in_range / enemy_speed
@@ -83,7 +83,7 @@ it walls. Tune the two curves against each other.
 
 Income sources and sinks must be balanced so the player is *almost* able to cover each wave:
 
-```
+```text
 income_per_wave = kill_bounty * enemies_killed + wave_clear_bonus (+ interest, optional)
 spend           = tower_costs + upgrade_costs
 ```

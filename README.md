@@ -291,7 +291,7 @@ func _physics_process(delta: float) -> void:
 
 ## Repository layout
 
-```
+```text
 skills/          66 specialized skills, grouped by engine / discipline / genre / workflow
 router/          the master router skill (+ references/)
 docs/            authoring standard, installation, compatibility

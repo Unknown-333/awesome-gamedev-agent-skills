@@ -22,7 +22,7 @@ The agent pre-loads only the `name` + `description` of every skill; it reads the
 demand**, and reads bundled files **only when needed**. This is *progressive disclosure* —
 design for it.
 
-```
+```text
 skills/<category>/<skill-name>/
 ├── SKILL.md            # required — the playbook (keep < 500 lines)
 ├── references/         # optional — deep docs the agent reads on demand (one level deep)
@@ -86,7 +86,7 @@ These are agent-specific keys that must never appear in a committed `SKILL.md`. 
 (Cursor, for example) accept a few of them, but keeping them out of the source is exactly what
 makes one file portable across every agent. The validator fails the build if any appear:
 
-```
+```text
 when_to_use   argument-hint   disable-model-invocation   user-invocable   model
 paths         hooks           shell                      context          globs
 alwaysApply   trigger
