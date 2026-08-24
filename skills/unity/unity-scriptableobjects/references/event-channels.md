@@ -68,8 +68,9 @@ generic `GameEvent<T>` because Unity cannot create assets for open generic types
 
 ## Runtime set / registry (a shared, live collection)
 
-Instead of `FindObjectsOfType` every frame, objects add themselves to a shared set on enable
-and remove on disable. Systems (AI targeting, minimap) read the set.
+Instead of `FindObjectsByType` every frame (Unity 6 replaced the deprecated `FindObjectsOfType`),
+objects add themselves to a shared set on enable and remove on disable. Systems (AI targeting,
+minimap) read the set.
 
 ```csharp
 [CreateAssetMenu(menuName = "Game/Runtime Set/Enemy Set")]
