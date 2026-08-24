@@ -193,3 +193,200 @@ abandoned and later re-entered, or the second wait finishes instantly.
 
 The `Sequence`/`Selector`/`Parallel` execution logic and the decorator library build directly on
 these base classes — see the composites and decorators sections below.
+
+## Composites — how child statuses combine
+
+Composites are the control flow of a tree. The two you use constantly are `Sequence` (AND) and
+`Selector` (OR/fallback); `Parallel` covers concurrent branches.
+
+```csharp
+// Sequence = AND: tick children in order; stop at the first that is not Success.
+// Resumes at the Running child next tick ("memory" variant).
+public sealed class Sequence : Composite
+{
+    public override Status Tick(Blackboard bb, float dt)
+    {
+        for (; Current < Children.Count; Current++)
+        {
+            var s = Children[Current].Tick(bb, dt);
+            if (s == Status.Running) return Status.Running;   // resume here next tick
+            if (s == Status.Failure) { Current = 0; return Status.Failure; }
+        }
+        Current = 0;
+        return Status.Success;                                // every child succeeded
+    }
+}
+
+// Selector = OR / fallback: return the first child that is not Failure.
+public sealed class Selector : Composite
+{
+    public override Status Tick(Blackboard bb, float dt)
+    {
+        for (; Current < Children.Count; Current++)
+        {
+            var s = Children[Current].Tick(bb, dt);
+            if (s == Status.Running) return Status.Running;   // resume here next tick
+            if (s == Status.Success) { Current = 0; return Status.Success; }
+        }
+        Current = 0;
+        return Status.Failure;                                // every child failed
+    }
+}
+```
+
+**Memory vs reactive.** The versions above *remember* the `Running` child and resume there. That is
+efficient but does not let a higher-priority sibling interrupt. For a **reactive** selector — the
+common case for combat AI — re-check children from index 0 every tick and abort the running branch
+when an earlier child changes its mind:
+
+```csharp
+// Reactive selector: earlier (higher-priority) children can preempt a lower running branch.
+public sealed class ReactiveSelector : Composite
+{
+    private int _running = -1;
+    public override Status Tick(Blackboard bb, float dt)
+    {
+        for (int i = 0; i < Children.Count; i++)
+        {
+            var s = Children[i].Tick(bb, dt);
+            if (s == Status.Failure) continue;
+            if (_running != -1 && _running != i) Children[_running].Reset();  // abort old branch
+            _running = s == Status.Running ? i : -1;
+            return s;                                       // Success or Running
+        }
+        _running = -1;
+        return Status.Failure;
+    }
+
+    public override void Reset() { base.Reset(); _running = -1; }
+}
+```
+
+`Parallel` ticks every child each step and resolves with a policy — succeed when *any* (or *all*)
+succeed, fail when *any* (or *all*) fail. Use it for "attack while strafing" or "play VFX while
+moving".
+
+```csharp
+public enum ParallelPolicy { RequireOne, RequireAll }
+
+public sealed class Parallel : Composite
+{
+    private readonly ParallelPolicy _success, _failure;
+    public Parallel(ParallelPolicy success, ParallelPolicy failure)
+    { _success = success; _failure = failure; }
+
+    public override Status Tick(Blackboard bb, float dt)
+    {
+        int successes = 0, failures = 0;
+        foreach (var child in Children)
+        {
+            var s = child.Tick(bb, dt);
+            if (s == Status.Success) successes++;
+            else if (s == Status.Failure) failures++;
+        }
+        if (_failure == ParallelPolicy.RequireOne && failures > 0) return Status.Failure;
+        if (_failure == ParallelPolicy.RequireAll && failures == Children.Count) return Status.Failure;
+        if (_success == ParallelPolicy.RequireOne && successes > 0) return Status.Success;
+        if (_success == ParallelPolicy.RequireAll && successes == Children.Count) return Status.Success;
+        return Status.Running;
+    }
+}
+```
+
+## Decorators — wrap one child to change its meaning
+
+Decorators add policy without new leaves: invert a result, force a status, gate on a cooldown, or
+repeat. Each wraps exactly one child.
+
+```csharp
+// Inverter: Success <-> Failure (Running passes through). "NOT".
+public sealed class Inverter : Decorator
+{
+    public override Status Tick(Blackboard bb, float dt) => Child.Tick(bb, dt) switch
+    {
+        Status.Success => Status.Failure,
+        Status.Failure => Status.Success,
+        _              => Status.Running,
+    };
+}
+
+// ForceSuccess: swallow a child's failure so a Sequence keeps going (optional steps).
+public sealed class ForceSuccess : Decorator
+{
+    public override Status Tick(Blackboard bb, float dt)
+        => Child.Tick(bb, dt) == Status.Running ? Status.Running : Status.Success;
+}
+
+// Repeat: run the child up to n times (n <= 0 = forever), restarting on each Success.
+public sealed class Repeat : Decorator
+{
+    private readonly int _count;
+    private int _done;
+    public Repeat(int count) => _count = count;
+
+    public override Status Tick(Blackboard bb, float dt)
+    {
+        var s = Child.Tick(bb, dt);
+        if (s == Status.Running) return Status.Running;
+        if (s == Status.Failure) { _done = 0; return Status.Failure; }
+        _done++;
+        if (_count > 0 && _done >= _count) { _done = 0; return Status.Success; }
+        Child.Reset();                        // loop again
+        return Status.Running;
+    }
+
+    public override void Reset() { base.Reset(); _done = 0; }
+}
+
+// Cooldown: gate the child so it can only run once per interval (attack/ability rate-limiting).
+public sealed class Cooldown : Decorator
+{
+    private readonly float _seconds;
+    private float _readyAt;
+    public Cooldown(float seconds) => _seconds = seconds;
+
+    public override Status Tick(Blackboard bb, float dt)
+    {
+        float now = bb.Get<float>("time");
+        if (now < _readyAt) return Status.Failure;     // still cooling down
+        var s = Child.Tick(bb, dt);
+        if (s == Status.Success) _readyAt = now + _seconds;
+        return s;
+    }
+
+    public override void Reset() { base.Reset(); _readyAt = 0f; }
+}
+```
+
+## Running the tree
+
+Wrap the root and tick it on your decision cadence. A behavior tree does **not** need to tick every
+render frame — 5–15 Hz is plenty for most NPCs and slashes CPU cost.
+
+```csharp
+public sealed class BehaviorTree
+{
+    private readonly Node _root;
+    private readonly Blackboard _bb;
+    public BehaviorTree(Node root, Blackboard bb) { _root = root; _bb = bb; }
+
+    public Status Tick(float dt)
+    {
+        _bb.Set("time", _bb.Get<float>("time") + dt);   // keep a clock for Cooldown/Wait
+        return _root.Tick(_bb, dt);
+    }
+}
+
+// Fluent assembly — build once at spawn, then tick.
+var tree = new BehaviorTree(
+    new ReactiveSelector()
+        .Add(new Sequence()                              // combat branch (highest priority)
+            .Add(new CanSeeTarget(sightRange: 12f))
+            .Add(new MoveToTarget(speed: 6f, arriveRadius: 1.5f))
+            .Add(new Cooldown(0.8f).Wrap(new AttackTarget())))
+        .Add(new Patrol(waypoints)),                     // fallback
+    blackboard);
+```
+
+The `Patrol` and `AttackTarget` leaves, and full agents that assemble these pieces, are in
+`references/practical-examples.md`.
