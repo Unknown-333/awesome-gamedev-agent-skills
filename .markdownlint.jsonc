@@ -1,0 +1,17 @@
+// markdownlint configuration for awesome-gamedev-agent-skills.
+// Formalizes the linting the docs already assume (see the markdownlint-disable
+// directives in README.md). Advisory in-editor only; not run in CI.
+{
+  "default": true,
+  // Prose and reference tables wrap past 80 cols; line length is not enforced.
+  "MD013": false,
+  // README/docs use raw HTML (<p>, <img>, <details>) for layout.
+  "MD033": false,
+  // README opens with an HTML comment before the first heading.
+  "MD041": false,
+  // Duplicate section headings (e.g. "Pitfalls", "References") are fine across
+  // different nesting; only flag true sibling duplicates.
+  "MD024": { "siblings_only": true },
+  // Fenced code blocks must declare a language (enforced by Commit 3's cleanup).
+  "MD040": true
+}

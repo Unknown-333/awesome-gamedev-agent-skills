@@ -1,0 +1,9 @@
+{
+  // Recommended extensions for contributing to awesome-gamedev-agent-skills.
+  // Skills are Markdown (SKILL.md) validated by a dependency-free Python script.
+  "recommendations": [
+    "davidanson.vscode-markdownlint",
+    "ms-python.python",
+    "redhat.vscode-yaml"
+  ]
+}
