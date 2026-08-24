@@ -292,11 +292,12 @@ func _physics_process(delta: float) -> void:
 ## Repository layout
 
 ```
-skills/        66 specialized skills, grouped by engine / discipline / genre / workflow
-router/        the master router skill (+ references/)
-docs/          authoring standard, installation, compatibility
-templates/     SKILL.md template
-scripts/       validate-skills.py and tooling
+skills/          66 specialized skills, grouped by engine / discipline / genre / workflow
+router/          the master router skill (+ references/)
+docs/            authoring standard, installation, compatibility
+templates/       SKILL.md template
+scripts/         validate-skills.py and tooling
+.claude-plugin/  Claude Code plugin marketplace manifest (marketplace.json)
 ```
 
 ## Contributing
