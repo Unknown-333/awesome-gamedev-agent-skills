@@ -10,12 +10,6 @@ description: >
   utility AI, response/scoring curve, or consideration. For choosing between FSM/BT/steering
   or for pathfinding, use game-ai; for Unreal's BehaviorTree/Blackboard assets, use
   unreal-behavior-trees.
-license: Apache-2.0
-compatibility: Engine-agnostic. Reference implementation in C# (portable to Unity 6 and Godot 4 C#); the patterns map cleanly to C++ and GDScript.
-metadata:
-  engine: none
-  category: disciplines
-  difficulty: advanced
 ---
 
 # Behavior Trees & Utility AI
