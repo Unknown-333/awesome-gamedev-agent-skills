@@ -23,7 +23,7 @@ task skills before it writes code.
 - **Cross-engine.** Godot, Unity, Unreal, Phaser, PixiJS, three.js, Bevy, pygame, LÖVE, Roblox.
 - **You don't pick skills.** The router detects your engine and task and loads only what fits.
 - **Built to trust.** Every skill is written from primary docs, version-pinned to a stated
-  engine release, and checked by a [validator](scripts/validate-skills.py). 
+  engine release, and checked by a [validator](scripts/validate-skills.py).
 
 ## Contents
 
