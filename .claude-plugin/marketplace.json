@@ -8,7 +8,7 @@
     {
       "name": "gamedev",
       "source": "./",
-      "description": "Everything: the master router plus all 66 game-dev skills across every engine, discipline, genre, and workflow.",
+      "description": "Everything: the master router plus all 67 game-dev skills across every engine, discipline, genre, and workflow.",
       "skills": [
         "./router",
         "./skills/godot/godot-gdscript",
@@ -52,6 +52,7 @@
         "./skills/other-engines/roblox-luau",
         "./skills/other-engines/roblox-datastores",
         "./skills/disciplines/game-ai",
+        "./skills/disciplines/ai-behavior-trees-utility-ai",
         "./skills/disciplines/procedural-gen",
         "./skills/disciplines/dialogue-systems",
         "./skills/disciplines/save-systems",
@@ -168,6 +169,7 @@
       "description": "Cross-engine concepts: AI, procedural gen, dialogue, saves, audio, shaders, physics, level design, input.",
       "skills": [
         "./skills/disciplines/game-ai",
+        "./skills/disciplines/ai-behavior-trees-utility-ai",
         "./skills/disciplines/procedural-gen",
         "./skills/disciplines/dialogue-systems",
         "./skills/disciplines/save-systems",
